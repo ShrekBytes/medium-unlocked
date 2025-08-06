@@ -24,6 +24,7 @@
 ## Features
 
 * Detects Medium paywalls automatically
+* Works on both mobile and desktop
 * Adds ReadMedium & Freedium buttons
 * Simple, fast, and privacy-respecting
 * Supports Medium's dynamic page loads (SPA)
