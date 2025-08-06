@@ -38,7 +38,7 @@
 
 <p align="center">
   <img src="screenshots/mobile.jpg" width="33%"/>
-  <img src="screenshots/pc.jpg" width="85%"/>
+  <img src="screenshots/pc.jpg" width="88%"/>
 </p>
 
 
