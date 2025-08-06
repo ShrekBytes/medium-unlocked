@@ -4,8 +4,9 @@
 
 ![Screenshot of Medium Unlocked](screenshots/pc.jpg)
 
-[![Install Script](https://img.shields.io/badge/Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge\&logo=greasemonkey)](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
-
+<p align ="center">
+  [![Install Script](https://img.shields.io/badge/Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge\&logo=greasemonkey)](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
+</p>
 
 ## Table of Contents
 
