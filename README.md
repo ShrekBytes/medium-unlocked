@@ -4,7 +4,7 @@
 
 ![Screenshot of Medium Unlocked](screenshots/pc.jpg)
 
-[![Install Medium Unlocked](https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-darkviolet?style=for-the-badge&logo=userscript)](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/main/medium-unlocked.user.js)
+[![Install Medium Unlocked](https://img.shields.io/badge/Install%20Userscript-Medium%20Unlocked-orange?style=for-the-badge&logo=userscript)](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/main/medium-unlocked.user.js)
 [![View on GreasyFork](https://img.shields.io/badge/View%20on-GreasyFork-4E9A06?style=for-the-badge&logo=greasyfork)](https://greasyfork.org/en/scripts/423839-medium-unlocked)
 
 ## Table of Contents
