@@ -2,7 +2,7 @@
 
 > A userscript that adds alternate reading links (ReadMedium & Freedium) for paywalled Medium articles.
 
-![Screenshot of Medium Unlocked](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png)
+![Screenshot of Medium Unlocked](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/pc.jpg)
 
 ---
 
