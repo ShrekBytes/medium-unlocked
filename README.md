@@ -5,11 +5,11 @@
 ![Screenshot of Medium Unlocked](screenshots/pc.jpg)
 
 <p align="center">
-  <a href="https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/main/medium-unlocked.user.js" style="margin-right: 10px;">
-    <img src="https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Click to install"/>
+  <a href="https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/main/medium-unlocked.user.js">
+    <img src="https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-violet?style=for-the-badge&logo=userscript" alt="Install Medium Unlocked" />
   </a>
   <a href="https://greasyfork.org/en/scripts/423839-medium-unlocked">
-    ![View on GreasyFork](https://img.shields.io/badge/View%20on-GreasyFork-4E9A06?style=for-the-badge&logo=greasyfork)
+    <img src="https://img.shields.io/badge/View%20on-GreasyFork-4E9A06?style=for-the-badge&logo=greasyfork" alt="View on GreasyFork" />
   </a>
 </p>
 
