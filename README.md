@@ -10,6 +10,7 @@
 ## Table of Contents
 
 * [Overview](#overview)
+* [Supported Domains](#supporteddomains)
 * [Usage](#usage)
 * [Features](#features)
 * [Notes](#notes)
@@ -19,6 +20,21 @@
 ## Overview
 
 **Medium Unlocked** is a lightweight userscript that detects paywalled ("member-only") articles on Medium and provides alternate reading links using external services — [ReadMedium](https://readmedium.com) and [Freedium](https://freedium.cfd).
+
+
+## Supported Domains
+
+### ReadMedium
+
+- Medium domains (`medium.com`)
+- Medium subdomains (`*.medium.com`)
+
+### Freedium
+
+- Medium domains (`medium.com`)
+- Medium subdomains (`*.medium.com`)
+- InfoSec Write-ups (`infosecwriteups.com`)
+- Better Programming (`betterprogramming.pub`)
 
 
 ## Usage
