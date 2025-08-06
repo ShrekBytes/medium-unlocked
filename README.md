@@ -6,24 +6,11 @@
 
 <p align="center">
   <a href="https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js">
-    <img src="https://img.shields.io/badge/Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Install Script"/>
-  </a>
-</p>
-
-<img src="https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Click to install"/>
-<p align="center">
-  <a href="https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js">
-    <img src="assets/install-button.png" alt="Click to install" width="200"/>
-  </a>
-</p>
-<p align="center">
-  <a href="https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js">
     <img src="https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Click to install"/>
   </a>
   <br/>
   <strong>🛠️ Click the button above to install the userscript</strong>
 </p>
-<img src="https://img.shields.io/badge/🛠️%20Click%20to%20Install-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Click to install"/>
 
 
 
