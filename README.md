@@ -30,6 +30,10 @@
 * Supports Medium's dynamic page loads (SPA)
 
 
+![mobile](screenshots/mobile.jpg)
+![pc](screenshots/pc.jpg)
+
+
 ## Usage
 
 1. Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
