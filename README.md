@@ -5,7 +5,7 @@
 ![Screenshot of Medium Unlocked](screenshots/pc.jpg)
 
 <p align="center">
-  <a href="https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js">
+  <a href="medium-unlocked.user.js">
     <img src="https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Click to install"/>
   </a>
   <br/>
@@ -31,7 +31,7 @@
 ## Usage
 
 1. Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
-2. [Click here to install the script](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
+2. [Click here to install the script](medium-unlocked.user.js)
 3. Done! Visit Medium and enjoy unrestricted reading
 
 
