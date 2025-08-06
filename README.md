@@ -37,7 +37,7 @@
 * Supports Medium's dynamic page loads (SPA)
 
 <p align="center">
-  <img src="screenshots/mobile.jpg" width="44%"/>
+  <img src="screenshots/mobile.jpg" width="33%"/>
   <img src="screenshots/pc.jpg" width="85%"/>
 </p>
 
