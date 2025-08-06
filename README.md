@@ -10,7 +10,7 @@
 ## Table of Contents
 
 * [Overview](#overview)
-* [Supported Domains](#supporteddomains)
+* [Supported Domains](#supported-domains)
 * [Usage](#usage)
 * [Features](#features)
 * [Notes](#notes)
