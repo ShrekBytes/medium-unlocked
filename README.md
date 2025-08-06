@@ -29,9 +29,10 @@
 * Simple, fast, and privacy-respecting
 * Supports Medium's dynamic page loads (SPA)
 
-
-![mobile](screenshots/mobile.jpg)
-![pc](screenshots/pc.jpg)
+<p align="center">
+  <img src="screenshots/mobile.jpg" width="44%"/>
+  <img src="screenshots/pc.jpg" width="100%"/>
+</p>
 
 
 ## Usage
