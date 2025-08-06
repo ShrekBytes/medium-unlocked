@@ -10,8 +10,8 @@
 ## Table of Contents
 
 * [Overview](#overview)
-* [Features](#features)
 * [Usage](#usage)
+* [Features](#features)
 * [Notes](#notes)
 * [Contributing](#contributing)
 
@@ -19,6 +19,13 @@
 ## Overview
 
 **Medium Unlocked** is a lightweight userscript that detects paywalled ("member-only") articles on Medium and provides alternate reading links using external services — [ReadMedium](https://readmedium.com) and [Freedium](https://freedium.cfd).
+
+
+## Usage
+
+1. Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+2. [Click here to install the script](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
+3. Done! Visit Medium and enjoy unrestricted reading
 
 
 ## Features
@@ -33,13 +40,6 @@
   <img src="screenshots/mobile.jpg" width="44%"/>
   <img src="screenshots/pc.jpg" width="85%"/>
 </p>
-
-
-## Usage
-
-1. Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
-2. [Click here to install the script](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
-3. Done! Visit Medium and enjoy unrestricted reading
 
 
 ## Notes
