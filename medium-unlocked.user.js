@@ -12,6 +12,8 @@
 // @noframes
 // @homepageURL  https://github.com/ShrekBytes/medium-unlocked
 // @supportURL   https://github.com/ShrekBytes/medium-unlocked/issues
+// @downloadURL  https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js
+// @updateURL    https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js
 // ==/UserScript==
 
 (function () {
