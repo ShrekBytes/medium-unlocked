@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @version      1.3
+// @version      1.4
 // @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles.
 // @author       ShrekBytes
 // @license      MIT
@@ -9,6 +9,8 @@
 // @match        https://*.medium.com/*
 // @match        https://infosecwriteups.com/*
 // @match        https://*.infosecwriteups.com/*
+// @match        https://betterprogramming.pub/*
+// @match        https://*.betterprogramming.pub/*
 // @icon         https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png
 // @grant        none
 // @noframes
