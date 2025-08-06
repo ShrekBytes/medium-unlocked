@@ -32,9 +32,9 @@
 
 ## Usage
 
-1. Install a userscript manager: [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
-2. [Install the script](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
-3. Visit Medium and enjoy alternate reading links.
+1. Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+2. [Click here to install the script](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
+3. Done! Visit Medium and enjoy unrestricted reading
 
 
 ## Notes
