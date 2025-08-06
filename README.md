@@ -1,56 +1,81 @@
-# 📰 Medium Unlocked
+# Medium Unlocked
 
-**Medium Unlocked** is a lightweight userscript that enhances your reading experience on [Medium](https://medium.com) by adding one-click access to alternate, paywall-free versions of articles using **ReadMedium** and **Freedium**.
+> A userscript that unlocks alternate reading links (ReadMedium and Freedium) for paywalled Medium articles.
 
-> 📖 Read paywalled Medium articles easily — no account, no subscriptions, no BS.
-
-## 🔧 Features
-
-- 🔗 Adds buttons to view the current article on:
-  - [ReadMedium](https://readmedium.com)
-  - [Freedium](https://freedium.cfd)
-- 🧠 Detects paywalled ("Member-only") articles automatically.
-- ⚡ Works seamlessly with Medium's single-page app (SPA) navigation.
-- 🎯 Simple UI with non-intrusive placement.
-- 🛠️ No external dependencies. Pure vanilla JavaScript.
-
-## 📸 Preview
-
-![Medium Unlocked Screenshot](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png)
-
-## 🚀 Installation
-
-To use this userscript, you'll need a userscript manager extension like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
-
-### 1. Install a Userscript Manager
-- **Chrome / Edge**: [Tampermonkey](https://chrome.google.com/webstore/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-- **Firefox**: [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
-
-### 2. Install the Script
-👉 [Click here to install Medium Unlocked](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js)
-
-Alternatively, copy and paste the code manually from [`medium-unlocked.user.js`](https://github.com/ShrekBytes/medium-unlocked/blob/main/medium-unlocked.user.js) into your userscript manager.
-
-## 💡 How It Works
-
-When you visit a Medium article, the script checks if it's behind a paywall. If so, it injects two buttons in the top-right corner of the page:
-- **ReadMedium**: `https://readmedium.com/en/<article-url>`
-- **Freedium**: `https://freedium.cfd/<article-url>`
-
-These services attempt to provide readable versions of the content without requiring a Medium subscription.
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## 🧑‍💻 Author
-
-Made with ☕️ by [ShrekBytes](https://github.com/ShrekBytes)
-
-## 🛠 Support & Feedback
-
-Found a bug or have a feature request? [Open an issue](https://github.com/ShrekBytes/medium-unlocked/issues)
+![Screenshot of Medium Unlocked](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png)
 
 ---
 
-> ⚠️ **Disclaimer**: This script is intended for educational purposes. Bypass of paywalls may violate the terms of service of some websites. Use responsibly.
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Usage](#usage)
+- [How It Works](#how-it-works)
+- [Installation](#installation)
+- [Warnings](#warnings)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Overview
+
+**Medium Unlocked** is a lightweight userscript that detects paywalled ("member-only") articles on Medium and provides alternate reading links using external services — [ReadMedium](https://readmedium.com) and [Freedium](https://freedium.cfd).
+
+---
+
+## Features
+
+- Detects Medium paywalls automatically
+- Adds two unobtrusive external reading buttons (ReadMedium & Freedium)
+- Simple, fast, and privacy-respecting
+- Works with single-page navigation (SPA) on Medium
+
+---
+
+## Usage
+
+Once installed, visit any [Medium](https://medium.com) article.  
+If the article is paywalled, you’ll see **"ReadMedium"** and **"Freedium"** buttons appear near the right side of the page.  
+Clicking them will open the same article via an alternate reader.
+
+---
+
+## How It Works
+
+- Monitors the DOM for paywall indicators
+- When a paywall is detected, it dynamically injects two external reading links
+- Uses debouncing and MutationObserver to handle Medium’s dynamic page loads
+
+---
+
+## Installation
+
+1. Install a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
+2. [Click here to install the script](https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js).
+3. Done! Visit Medium and enjoy unrestricted reading links.
+
+---
+
+## Warnings
+
+- This script does **not** bypass paywalls directly.
+- It only provides external links to third-party readers.
+- Use at your own discretion; websites may update their terms or structure at any time.
+
+---
+
+## Contributing
+
+Found a bug or have a feature request?  
+[Open an issue](https://github.com/ShrekBytes/medium-unlocked/issues) or submit a pull request.
+
+---
+
+## License
+
+[MIT](LICENSE)
+
+---
+
