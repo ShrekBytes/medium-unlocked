@@ -9,10 +9,8 @@
     <img src="https://img.shields.io/badge/→%20Install%20Userscript-Medium%20Unlocked-brightgreen?style=for-the-badge&logo=greasemonkey" alt="Click to install"/>
   </a>
   <a href="https://greasyfork.org/en/scripts/423839-medium-unlocked">
-    <img src="https://img.shields.io/badge/View%20on-GreasyFork-4E9A06?style=for-the-badge&logo=greasyfork" alt="View on GreasyFork"/>
+    ![View on GreasyFork](https://img.shields.io/badge/View%20on-GreasyFork-4E9A06?style=for-the-badge&logo=greasyfork)
   </a>
-  <br/>
-  <strong>🛠️ Click the button above to install the userscript</strong>
 </p>
 
 
