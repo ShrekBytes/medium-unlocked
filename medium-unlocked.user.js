@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Medium Unlocked Pro
+// @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
 // @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles with improved reliability.
 // @version      3.0
@@ -100,7 +100,7 @@
         '[data-testid="meter-stats"]',
         '[data-testid="subscribe-paywall"]',
         '.paywall',
-
+        
         // Secondary indicators
         '[data-testid="paywall-upsell"]',
         '[data-testid="meter-card"]',
@@ -109,13 +109,13 @@
         '.u-showForMembers',
         '.memberPreview',
         '.js-memberPreview',
-
+        
         // Content limitation indicators
         '.js-truncatedPostBody',
         '[data-source="paywall"]',
         '[data-post-id][data-source="meter"]',
         '.u-lineHeightTighter.u-fontSize18:last-child',
-
+        
         // Subscribe/upgrade prompts
         '[data-testid="subscribe-button"]',
         '[data-testid="upgrade-button"]',
@@ -156,7 +156,7 @@
     // Optimized button creation with minimal DOM operations
     function createButton(text, url, top) {
         const button = document.createElement('a');
-
+        
         // Set properties in batch for better performance
         Object.assign(button, {
             innerHTML: text,
@@ -186,11 +186,11 @@
 
         const url = encodeURIComponent(window.location.href);
         const fragment = document.createDocumentFragment();
-
+        
         // Create buttons in memory first
         fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 400));
         fragment.appendChild(createButton('Freedium', `https://freedium.cfd/${url}`, 440));
-
+        
         // Single DOM append operation
         document.body.appendChild(fragment);
         state.buttonsAdded = true;
@@ -198,7 +198,7 @@
 
     function removeButtons() {
         if (!state.buttonsAdded) return;
-
+        
         // Use more specific selector to avoid conflicts
         const buttons = document.querySelectorAll('.medium-unlock-btn');
         if (buttons.length > 0) {
@@ -210,7 +210,7 @@
     // Throttled paywall check to prevent excessive calls
     function checkPaywall() {
         const now = Date.now();
-
+        
         // Prevent rapid successive checks
         if (state.isChecking || (now - state.lastCheck) < 100) {
             return;
@@ -221,7 +221,7 @@
 
         try {
             const isPaywalledNow = isPaywalled();
-
+            
             if (isPaywalledNow && !state.buttonsAdded) {
                 addButtons();
             } else if (!isPaywalledNow && state.buttonsAdded) {
@@ -239,7 +239,7 @@
         if (state.checkTimeout) {
             clearTimeout(state.checkTimeout);
         }
-
+        
         state.checkTimeout = setTimeout(() => {
             checkPaywall();
             state.checkTimeout = null;
@@ -258,7 +258,7 @@
                     for (const node of mutation.addedNodes) {
                         if (node.nodeType === Node.ELEMENT_NODE) {
                             const element = node;
-
+                            
                             // Check if added node or its children contain paywall indicators
                             if (element.matches?.(PAYWALL_SELECTORS.join(',')) ||
                                 element.querySelector?.(PAYWALL_SELECTORS.join(','))) {
@@ -267,7 +267,7 @@
                             }
                         }
                     }
-
+                    
                     if (shouldCheck) break;
                 }
             }
@@ -281,7 +281,7 @@
     // Handle URL changes efficiently
     function handleUrlChange() {
         const newUrl = window.location.href;
-
+        
         if (newUrl !== state.currentUrl) {
             state.currentUrl = newUrl;
             removeButtons();
@@ -317,7 +317,7 @@
         // Setup observers and listeners
         if (!state.observer) {
             state.observer = createObserver();
-
+            
             // Wait for body to be available
             const startObserving = () => {
                 if (document.body) {
@@ -331,13 +331,13 @@
                     setTimeout(startObserving, 50);
                 }
             };
-
+            
             startObserving();
         }
 
         // Event listeners with passive option for performance
         window.addEventListener('popstate', handleUrlChange, { passive: true });
-
+        
         // Handle visibility changes
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
@@ -357,12 +357,12 @@
             state.observer.disconnect();
             state.observer = null;
         }
-
+        
         if (state.checkTimeout) {
             clearTimeout(state.checkTimeout);
             state.checkTimeout = null;
         }
-
+        
         removeButtons();
         state.isChecking = false;
     }
