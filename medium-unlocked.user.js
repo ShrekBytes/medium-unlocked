@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @version      1.6
+// @version      1.5
 // @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles.
 // @author       ShrekBytes
 // @license      MIT
@@ -59,15 +59,11 @@
 (function () {
     'use strict';
 
-    // Toggle to true for helpful console traces if you need to debug
-    const DEBUG = false;
-    const log = (...args) => { if (DEBUG) console.log('[MediumUnlocked]', ...args); };
-
     let buttonsAdded = false;
-    let observer = null;
     let currentUrl = window.location.href;
+    let observer;
 
-    // Debounce helper
+    // Utility: Debounce
     function debounce(fn, delay) {
         let timer;
         return function (...args) {
@@ -76,253 +72,109 @@
         };
     }
 
-    // Text patterns (regex) to detect paywall text in various forms
-    const textPatterns = [
-        /member-?only/i,
-        /subscribe to read/i,
-        /become a member/i,
-        /sign in to continue/i,
-        /sign in to read/i,
-        /to continue reading/i,
-        /join to continue/i,
-        /unlock this story/i,
-        /already used your free preview/i
-    ];
-
-    // Quick selectors that often indicate a paywall
-    const selectors = [
-        '[data-testid*="paywall"]',
-        '[data-test-id*="paywall"]',
-        '[data-testid*="meter"]',
-        '[data-test-id*="meter"]',
-        '[data-testid*="subscribe"]',
-        '[data-test-id*="subscribe"]',
-        'a[href*="subscribe"]',
-        'button[aria-label*="subscribe"]',
-        'div[class*="paywall"]',
-        '.js-paywall',
-        '.pw-cta',
-        '.is-paywall'
-    ];
-
-    function elementMatchesAnySelector() {
-        try {
-            const sel = selectors.join(',');
-            return !!document.querySelector(sel);
-        } catch (e) {
-            return false;
-        }
-    }
-
-    function elementTextMatchesPatterns(el) {
-        if (!el) return false;
-        const text = (el.textContent || '').trim();
-        if (!text) return false;
-        for (const p of textPatterns) {
-            if (p.test(text)) return true;
-        }
-        return false;
-    }
-
-    // Detect blocking overlays/dialogs with "subscribe" / "member" text and reasonable size/z-index
-    function hasBlockingOverlay() {
-        try {
-            // candidate nodes: dialogs, aria-modal, or elements styled as fixed/absolute
-            const overlayCandidates = Array.from(document.querySelectorAll(
-                'dialog, [role="dialog"], [aria-modal="true"], [style*="position: fixed"], [style*="position:fixed"], [style*="position:absolute"], [style*="position: absolute"]'
-            ));
-            for (const el of overlayCandidates) {
-                const rect = el.getBoundingClientRect();
-                if (rect.width < 60 || rect.height < 20) continue; // tiny elements unlikely to be paywall overlay
-                const cs = getComputedStyle(el);
-                const z = parseInt(cs.zIndex, 10) || 0;
-                const txt = (el.textContent || '').toLowerCase();
-                if (z >= 5 && (txt.includes('subscribe') || txt.includes('member') || txt.includes('sign in') || txt.includes('continue'))) {
-                    log('overlay candidate matched', el, z, txt.slice(0, 80));
-                    return true;
-                }
-            }
-        } catch (e) {
-            // fail safe: ignore overlay check if something goes wrong
-            log('overlay check error', e);
-        }
-        return false;
-    }
-
-    // The master detection function (quick selectors, article/main text, overlays)
+    // Check if the article is member-only (paywalled)
     function isMemberOnlyArticle() {
-        // 1) quick selectors (fast)
-        if (elementMatchesAnySelector()) {
-            log('matched quick selector');
-            return true;
-        }
-
-        // 2) check article / main region text only (less expensive than full body)
-        const mainEl = document.querySelector('article') || document.querySelector('main') || document.querySelector('[role="main"]');
-        if (elementTextMatchesPatterns(mainEl)) {
-            log('matched article/main text patterns');
-            return true;
-        }
-
-        // 3) overlay/dialog detection
-        if (hasBlockingOverlay()) {
-            log('matched blocking overlay');
-            return true;
-        }
-
-        // 4) conservative fallback: small scan on body for paywall patterns (only if nothing found above)
-        // This is done as a last resort because it's heavier.
-        try {
-            if (elementTextMatchesPatterns(document.body)) {
-                log('matched body text patterns (fallback)');
+        const quickSelectors = [
+            '[data-testid="paywall"]',
+            '[data-testid="meter-stats"]',
+            '[data-testid="subscribe-paywall"]'
+        ];
+        for (let selector of quickSelectors) {
+            if (document.querySelector(selector)) {
                 return true;
             }
-        } catch (e) {
-            // ignore
         }
 
+        // Fallback: check only main article text, not full body
+        const article = document.querySelector('article');
+        if (article) {
+            const text = article.textContent;
+            return text.includes('Member-only story') ||
+                   text.includes('Subscribe to read') ||
+                   text.includes('Become a member');
+        }
         return false;
     }
 
-    // Create a visible, fixed-position button
-    function createButton(text, url, topPx) {
-        const a = document.createElement('a');
-        a.textContent = text;
-        a.href = url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.className = 'medium-reader-btn';
-        // fixed positioning so it doesn't rely on absolute layout calculations
-        a.style.cssText = [
-            'position: fixed',
-            `top: ${topPx}px`,
-            'right: 16px',
-            'z-index: 2147483647', // very high to be visible above overlays
-            'background: rgba(255,255,255,0.94)',
-            'backdrop-filter: blur(2px)',
-            'color: #000',
-            'border: 1px solid rgba(0,0,0,0.2)',
-            'border-radius: 4px',
-            'padding: 8px 10px',
-            'font-size: 13px',
-            'font-weight: 500',
-            'text-decoration: none',
-            'display: inline-flex',
-            'align-items: center',
-            'justify-content: center',
-            'box-shadow: 0 2px 6px rgba(0,0,0,0.08)',
-            'font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-        ].join(';');
-        return a;
+    // Create styled link button
+    function createButton(text, url, topPosition) {
+        const button = document.createElement('a');
+        button.textContent = text;
+        button.href = url;
+        button.target = '_blank';
+        button.rel = 'noopener noreferrer';
+        button.className = 'medium-reader-btn';
+        button.style.cssText = `
+            position: absolute;
+            top: ${topPosition}px;
+            right: 64px;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.44);
+            backdrop-filter: blur(2px);
+            color: black;
+            border: 1px solid black;
+            border-radius: 2px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        `;
+        return button;
     }
 
-    // Compute a sane top position for buttons (below any page header if present)
-    function getButtonTop() {
-        try {
-            const header = document.querySelector('header, nav, [role="banner"]');
-            if (header) {
-                const r = header.getBoundingClientRect();
-                // if header is visible at top, place buttons below it; otherwise default to 80
-                if (r.bottom > 0 && r.bottom < window.innerHeight) {
-                    return Math.min(Math.max(Math.round(r.bottom + 8), 48), 160);
-                }
-            }
-        } catch (e) {
-            // ignore
-        }
-        return 80;
-    }
-
-    // Add the two buttons to the page (if not already present)
+    // Add external links if not already present
     function addButtons() {
         if (buttonsAdded) return;
-        // Clean up any stray buttons
-        document.querySelectorAll('.medium-reader-btn').forEach(b => b.remove());
+        document.querySelectorAll('.medium-reader-btn').forEach(btn => btn.remove());
 
-        const encoded = encodeURIComponent(window.location.href);
-        const top = getButtonTop();
-        const btn1 = createButton('ReadMedium', `https://readmedium.com/en/${encoded}`, top);
-        const btn2 = createButton('Freedium', `https://freedium.cfd/${encoded}`, top + 48);
-
-        document.body.appendChild(btn1);
-        document.body.appendChild(btn2);
+        const encodedUrl = encodeURIComponent(window.location.href);
+        document.body.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${encodedUrl}`, 400));
+        document.body.appendChild(createButton('Freedium', `https://freedium.cfd/${encodedUrl}`, 440));
 
         buttonsAdded = true;
-        log('buttons added');
 
-        // stop observing once buttons are present (to save CPU)
-        if (observer) {
-            try { observer.disconnect(); } catch (e) { /* ignore */ }
-            observer = null;
-        }
+        // Stop observing once buttons are added
+        if (observer) observer.disconnect();
     }
 
-    // Debounced check - called by observer and initial timers
+    // Debounced paywall check
     const checkForPaywall = debounce(() => {
-        try {
-            if (!buttonsAdded && isMemberOnlyArticle()) {
-                addButtons();
-            }
-        } catch (e) {
-            log('checkForPaywall error', e);
+        if (!buttonsAdded && isMemberOnlyArticle()) {
+            addButtons();
         }
     }, 300);
 
-    // SPA navigation helpers: dispatch a custom event when history changes
-    (function () {
-        const _push = history.pushState;
-        history.pushState = function pushState() {
-            const res = _push.apply(this, arguments);
-            window.dispatchEvent(new Event('locationchange'));
-            return res;
-        };
-        const _replace = history.replaceState;
-        history.replaceState = function replaceState() {
-            const res = _replace.apply(this, arguments);
-            window.dispatchEvent(new Event('locationchange'));
-            return res;
-        };
-        window.addEventListener('popstate', () => window.dispatchEvent(new Event('locationchange')));
-    })();
-
-    // Called on location change to reset state and re-check
-    window.addEventListener('locationchange', () => {
-        if (window.location.href === currentUrl) return;
-        currentUrl = window.location.href;
-        buttonsAdded = false;
-        document.querySelectorAll('.medium-reader-btn').forEach(b => b.remove());
-        log('locationchanged, rechecking paywall for', currentUrl);
-        // small delay to give SPA a chance to render new article
-        setTimeout(checkForPaywall, 250);
-        setTimeout(checkForPaywall, 900);
-    });
-
-    // Init routine
+    // Initialize
     function init() {
-        if (!document.body) {
-            // wait for DOM
-            document.addEventListener('DOMContentLoaded', init, { once: true });
-            return;
-        }
-
-        // quick immediate checks (some pages render slowly)
+        buttonsAdded = false;
         checkForPaywall();
-        setTimeout(checkForPaywall, 500);
-        setTimeout(checkForPaywall, 1500);
-        setTimeout(checkForPaywall, 3500);
 
-        // Observe the whole body (debounced callback) to detect dynamically inserted paywall nodes
-        if (observer) {
-            try { observer.disconnect(); } catch (e) { /* ignore */ }
-        }
+        // Watch for SPA navigation changes
+        if (observer) observer.disconnect();
+        const watchTarget = document.querySelector('article') || document.body;
         observer = new MutationObserver(() => {
-            checkForPaywall();
+            if (window.location.href !== currentUrl) {
+                currentUrl = window.location.href;
+                buttonsAdded = false;
+                checkForPaywall();
+            }
         });
-        observer.observe(document.body, { childList: true, subtree: true });
-        log('observer attached to body');
+        observer.observe(watchTarget, { childList: true, subtree: true });
     }
 
-    // Start
-    init();
+    // Handle back/forward navigation
+    window.addEventListener('popstate', init);
 
+    // Kick off
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
+
