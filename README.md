@@ -23,7 +23,7 @@
 
 
 ## Supported Domains
-> This script supports all Medium domains, subdomains, and some custom domains. While it’s technically possible to match every site with `*://*/*`, doing so would run the script on all websites, which is inefficient and unnecessary. If you want a Medium-powered custom domain added, [open an issue](../../issues) and I’ll work on adding it.
+> This script supports all Medium domains, subdomains, and some custom domains. While it’s technically possible to match every site with `*://*/*`, doing so would run the script on all websites, which is inefficient and unnecessary. If you want a Medium-powered custom domain added, [open an issue](../../issues) and I’ll add it.
 
 ### ReadMedium
 
