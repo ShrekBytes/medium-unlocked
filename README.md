@@ -24,7 +24,7 @@
 
 ## Supported Domains
 > This script currently support all medium domains, subdomains and some custom domains.
-> While it’s technically possible to match every site using a wildcard pattern like `*/*`, doing so would make the script run on **every single website you visit**, which is inefficient and unnecessary.
+> While it’s technically possible to match every site using a wildcard pattern like `*://*/*`, doing so would make the script run on **every single website you visit**, which is inefficient and unnecessary.
 > If there’s a Medium-powered custom domain you want supported, [open an issue](../../issues) and I’ll work on adding it.
 
 ### ReadMedium
