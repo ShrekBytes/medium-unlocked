@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Medium Unlocked
+// @name         Medium Unlocked Enhanced
 // @namespace    https://github.com/ShrekBytes
-// @version      1.5
-// @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles.
+// @version      2.0
+// @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles with improved reliability.
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -47,6 +47,18 @@
 // @match        https://*.uxdesign.cc/*
 // @match        https://thebolditalic.com/*
 // @match        https://*.thebolditalic.com/*
+// @match        https://towardsdatascience.com/*
+// @match        https://*.towardsdatascience.com/*
+// @match        https://medium.freecodecamp.org/*
+// @match        https://*.medium.freecodecamp.org/*
+// @match        https://hackernoon.com/*
+// @match        https://*.hackernoon.com/*
+// @match        https://codeburst.io/*
+// @match        https://*.codeburst.io/*
+// @match        https://blog.usejournal.com/*
+// @match        https://*.blog.usejournal.com/*
+// @match        https://chatbotslife.com/*
+// @match        https://*.chatbotslife.com/*
 // @icon         https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png
 // @grant        none
 // @noframes
@@ -60,9 +72,11 @@
     'use strict';
 
     let buttonsAdded = false;
-    let checkTimeout;
+    let currentUrl = window.location.href;
+    let retryCount = 0;
+    const maxRetries = 5;
 
-    // Utility: Debounce function
+    // Utility: Debounce function with longer delay for better reliability
     function debounce(fn, delay) {
         let timer;
         return function (...args) {
@@ -71,27 +85,68 @@
         };
     }
 
-    // Check if the article is member-only (paywalled)
+    // Enhanced paywall detection with more selectors and patterns
     function isMemberOnlyArticle() {
-        const quickSelectors = [
+        // Quick selectors for common paywall elements
+        const paywallSelectors = [
             '[data-testid="paywall"]',
             '[data-testid="meter-stats"]',
-            '[data-testid="subscribe-paywall"]'
+            '[data-testid="subscribe-paywall"]',
+            '[data-testid="paywall-upsell"]',
+            '.paywall',
+            '.js-paywall',
+            '.meteredContent',
+            '.u-showForMembers',
+            '[data-post-id][data-source="paywall"]',
+            '.memberPreview',
+            '.js-memberPreview'
         ];
 
-        for (let selector of quickSelectors) {
+        // Check for paywall elements
+        for (let selector of paywallSelectors) {
             if (document.querySelector(selector)) {
                 return true;
             }
         }
 
-        const bodyText = document.body.textContent;
-        return bodyText.includes('Member-only story') ||
-            bodyText.includes('Subscribe to read') ||
-            bodyText.includes('Become a member');
+        // Text-based detection (more comprehensive)
+        const bodyText = document.body.textContent.toLowerCase();
+        const paywallPatterns = [
+            'member-only story',
+            'subscribe to read',
+            'become a member',
+            'read the full story',
+            'this story is published in',
+            'sign up to read',
+            'continue reading with a membership',
+            'unlock unlimited articles',
+            'this post is for paying subscribers only',
+            'get unlimited access',
+            'upgrade to continue reading'
+        ];
+
+        const foundPattern = paywallPatterns.some(pattern => bodyText.includes(pattern));
+        if (foundPattern) {
+            return true;
+        }
+
+        // Check for clipping/truncated content indicators
+        const clippingIndicators = [
+            '.js-truncatedPostBody',
+            '.u-lineHeightTighter.u-fontSize18',
+            '[data-selectable-paragraph]:last-child[data-truncated="true"]'
+        ];
+
+        for (let selector of clippingIndicators) {
+            if (document.querySelector(selector)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    // Create styled link button
+    // Create minimal styled button (original design)
     function createButton(text, url, topPosition) {
         const button = document.createElement('a');
         button.innerHTML = text;
@@ -100,7 +155,7 @@
         button.rel = 'noopener noreferrer';
         button.className = 'medium-reader-btn';
         button.style.cssText = `
-            position: absolute;
+            position: fixed;
             top: ${topPosition}px;
             right: 64px;
             z-index: 9999;
@@ -124,65 +179,146 @@
         return button;
     }
 
-    // Add external links if not already present
+    // Add buttons quickly
     function addButtons() {
         if (buttonsAdded) return;
 
-        // Remove any existing buttons (in case of navigation)
-        document.querySelectorAll('.medium-reader-btn').forEach(btn => btn.remove());
+        // Remove any existing buttons
+        removeButtons();
 
         const currentUrl = window.location.href;
         const encodedUrl = encodeURIComponent(currentUrl);
 
-        const readMediumBtn = createButton('ReadMedium', `https://readmedium.com/en/${encodedUrl}`, 400);
-        const freediumBtn = createButton('Freedium', `https://freedium.cfd/${encodedUrl}`, 440);
+        try {
+            const readMediumBtn = createButton('ReadMedium', `https://readmedium.com/en/${encodedUrl}`, 400);
+            const freediumBtn = createButton('Freedium', `https://freedium.cfd/${encodedUrl}`, 440);
 
-        document.body.appendChild(readMediumBtn);
-        document.body.appendChild(freediumBtn);
+            document.body.appendChild(readMediumBtn);
+            document.body.appendChild(freediumBtn);
 
-        buttonsAdded = true;
+            buttonsAdded = true;
+
+        } catch (error) {
+            console.error('Medium Unlocked: Error adding buttons:', error);
+        }
     }
 
-    // Debounced paywall check
+    // Remove existing buttons
+    function removeButtons() {
+        document.querySelectorAll('.medium-reader-btn').forEach(btn => btn.remove());
+        buttonsAdded = false;
+    }
+
+    // Faster paywall check with minimal delay
     const checkForPaywall = debounce(() => {
         if (isMemberOnlyArticle() && !buttonsAdded) {
             addButtons();
+        } else if (!isMemberOnlyArticle() && buttonsAdded) {
+            removeButtons();
         }
-    }, 500);
+    }, 200); // Much faster debounce
 
-    // Initialize on page load
+    // Initialize with immediate check
     function init() {
         buttonsAdded = false;
+
+        // Immediate check
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', checkForPaywall);
         } else {
             checkForPaywall();
         }
+
+        // One additional check for slow content
+        setTimeout(checkForPaywall, 1000);
     }
 
-    // Track URL changes for SPA behavior
-    let currentUrl = window.location.href;
-    const observer = new MutationObserver(() => {
-        if (window.location.href !== currentUrl) {
-            currentUrl = window.location.href;
-            buttonsAdded = false;
+    // Enhanced URL change detection
+    function handleUrlChange() {
+        const newUrl = window.location.href;
+        if (newUrl !== currentUrl) {
+            currentUrl = newUrl;
+            removeButtons();
+            setTimeout(checkForPaywall, 300); // Quick response to URL changes
+        }
+    }
+
+    // Comprehensive mutation observer
+    const observer = new MutationObserver((mutations) => {
+        let shouldCheck = false;
+
+        mutations.forEach(mutation => {
+            // Check for URL changes
+            if (window.location.href !== currentUrl) {
+                handleUrlChange();
+                shouldCheck = true;
+                return;
+            }
+
+            // Check for content changes that might indicate paywall loading
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                for (let node of mutation.addedNodes) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        const element = node;
+                        if (element.matches && (
+                            element.matches('[data-testid*="paywall"]') ||
+                            element.matches('[data-testid*="meter"]') ||
+                            element.matches('.paywall') ||
+                            element.textContent.toLowerCase().includes('member-only')
+                        )) {
+                            shouldCheck = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+        if (shouldCheck) {
             checkForPaywall();
         }
     });
 
     observer.observe(document.body, {
         childList: true,
-        subtree: true // ← More reliable in SPA
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['data-testid', 'class']
     });
 
-    // Also respond to back/forward navigation
-    window.addEventListener('popstate', () => {
-        buttonsAdded = false;
-        checkForPaywall();
+    // Handle navigation events
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('pushstate', handleUrlChange);
+    window.addEventListener('replacestate', handleUrlChange);
+
+    // Intercept history methods for SPA navigation
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function(...args) {
+        originalPushState.apply(history, args);
+        setTimeout(handleUrlChange, 50);
+    };
+
+    history.replaceState = function(...args) {
+        originalReplaceState.apply(history, args);
+        setTimeout(handleUrlChange, 50);
+    };
+
+    // Handle page visibility changes for quick response
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            setTimeout(checkForPaywall, 100);
+        }
     });
 
-    // Kick off
+    // Start the script
     init();
 
-})();
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        observer.disconnect();
+        removeButtons();
+    });
 
+})();
