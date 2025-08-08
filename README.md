@@ -24,6 +24,9 @@
 
 ## Supported Domains
 
+> This script currently doesn’t work on all custom domains.
+> If you’d like support for a specific site, [open an issue](issues) and I’ll do my best to add it.
+
 ### ReadMedium
 
 - Medium domains (`medium.com`)
