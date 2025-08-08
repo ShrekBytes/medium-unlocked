@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @version      1.5
+// @version      1.4
 // @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles.
 // @author       ShrekBytes
 // @license      MIT
@@ -11,42 +11,6 @@
 // @match        https://*.infosecwriteups.com/*
 // @match        https://betterprogramming.pub/*
 // @match        https://*.betterprogramming.pub/*
-// @match        https://betterhumans.pub/*
-// @match        https://*.betterhumans.pub/*
-// @match        https://uxplanet.org/*
-// @match        https://*.uxplanet.org/*
-// @match        https://writingcooperative.com/*
-// @match        https://*.writingcooperative.com/*
-// @match        https://entrepreneurshandbook.co/*
-// @match        https://*.entrepreneurshandbook.co/*
-// @match        https://medium.muz.li/*
-// @match        https://*.medium.muz.li/*
-// @match        https://blog.prototypr.io/*
-// @match        https://*.blog.prototypr.io/*
-// @match        https://bettermarketing.pub/*
-// @match        https://*.bettermarketing.pub/*
-// @match        https://byrslf.co/*
-// @match        https://*.byrslf.co/*
-// @match        https://levelup.gitconnected.com/*
-// @match        https://*.levelup.gitconnected.com/*
-// @match        https://javascript.plainenglish.io/*
-// @match        https://*.javascript.plainenglish.io/*
-// @match        https://thebelladonnacomedy.com/*
-// @match        https://*.thebelladonnacomedy.com/*
-// @match        https://medium.datadriveninvestor.com/*
-// @match        https://*.medium.datadriveninvestor.com/*
-// @match        https://itnext.io/*
-// @match        https://*.itnext.io/*
-// @match        https://proandroiddev.com/*
-// @match        https://*.proandroiddev.com/*
-// @match        https://code.likeagirl.io/*
-// @match        https://*.code.likeagirl.io/*
-// @match        https://blog.bitsrc.io/*
-// @match        https://*.blog.bitsrc.io/*
-// @match        https://uxdesign.cc/*
-// @match        https://*.uxdesign.cc/*
-// @match        https://thebolditalic.com/*
-// @match        https://*.thebolditalic.com/*
 // @icon         https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png
 // @grant        none
 // @noframes
@@ -60,10 +24,9 @@
     'use strict';
 
     let buttonsAdded = false;
-    let currentUrl = window.location.href;
-    let observer;
+    let checkTimeout;
 
-    // Utility: Debounce
+    // Utility: Debounce function
     function debounce(fn, delay) {
         let timer;
         return function (...args) {
@@ -79,27 +42,23 @@
             '[data-testid="meter-stats"]',
             '[data-testid="subscribe-paywall"]'
         ];
+
         for (let selector of quickSelectors) {
             if (document.querySelector(selector)) {
                 return true;
             }
         }
 
-        // Fallback: check only main article text, not full body
-        const article = document.querySelector('article');
-        if (article) {
-            const text = article.textContent;
-            return text.includes('Member-only story') ||
-                   text.includes('Subscribe to read') ||
-                   text.includes('Become a member');
-        }
-        return false;
+        const bodyText = document.body.textContent;
+        return bodyText.includes('Member-only story') ||
+            bodyText.includes('Subscribe to read') ||
+            bodyText.includes('Become a member');
     }
 
     // Create styled link button
     function createButton(text, url, topPosition) {
         const button = document.createElement('a');
-        button.textContent = text;
+        button.innerHTML = text;
         button.href = url;
         button.target = '_blank';
         button.rel = 'noopener noreferrer';
@@ -115,9 +74,11 @@
             border: 1px solid black;
             border-radius: 2px;
             font-size: 14px;
+            font-weight: 400;
             cursor: pointer;
             width: 100px;
             height: 36px;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -130,51 +91,62 @@
     // Add external links if not already present
     function addButtons() {
         if (buttonsAdded) return;
+
+        // Remove any existing buttons (in case of navigation)
         document.querySelectorAll('.medium-reader-btn').forEach(btn => btn.remove());
 
-        const encodedUrl = encodeURIComponent(window.location.href);
-        document.body.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${encodedUrl}`, 400));
-        document.body.appendChild(createButton('Freedium', `https://freedium.cfd/${encodedUrl}`, 440));
+        const currentUrl = window.location.href;
+        const encodedUrl = encodeURIComponent(currentUrl);
+
+        const readMediumBtn = createButton('ReadMedium', `https://readmedium.com/en/${encodedUrl}`, 400);
+        const freediumBtn = createButton('Freedium', `https://freedium.cfd/${encodedUrl}`, 440);
+
+        document.body.appendChild(readMediumBtn);
+        document.body.appendChild(freediumBtn);
 
         buttonsAdded = true;
-
-        // Stop observing once buttons are added
-        if (observer) observer.disconnect();
     }
 
     // Debounced paywall check
     const checkForPaywall = debounce(() => {
-        if (!buttonsAdded && isMemberOnlyArticle()) {
+        if (isMemberOnlyArticle() && !buttonsAdded) {
             addButtons();
         }
-    }, 300);
+    }, 500);
 
-    // Initialize
+    // Initialize on page load
     function init() {
         buttonsAdded = false;
-        checkForPaywall();
-
-        // Watch for SPA navigation changes
-        if (observer) observer.disconnect();
-        const watchTarget = document.querySelector('article') || document.body;
-        observer = new MutationObserver(() => {
-            if (window.location.href !== currentUrl) {
-                currentUrl = window.location.href;
-                buttonsAdded = false;
-                checkForPaywall();
-            }
-        });
-        observer.observe(watchTarget, { childList: true, subtree: true });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkForPaywall);
+        } else {
+            checkForPaywall();
+        }
     }
 
-    // Handle back/forward navigation
-    window.addEventListener('popstate', init);
+    // Track URL changes for SPA behavior
+    let currentUrl = window.location.href;
+    const observer = new MutationObserver(() => {
+        if (window.location.href !== currentUrl) {
+            currentUrl = window.location.href;
+            buttonsAdded = false;
+            checkForPaywall();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true // ← More reliable in SPA
+    });
+
+    // Also respond to back/forward navigation
+    window.addEventListener('popstate', () => {
+        buttonsAdded = false;
+        checkForPaywall();
+    });
 
     // Kick off
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+    init();
+
 })();
 
