@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Medium Unlocked Enhanced
+// @name         Medium Unlocked Pro
 // @namespace    https://github.com/ShrekBytes
-// @version      2.0
 // @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles with improved reliability.
+// @version      3.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -59,266 +59,319 @@
 // @match        https://*.blog.usejournal.com/*
 // @match        https://chatbotslife.com/*
 // @match        https://*.chatbotslife.com/*
+// @match        https://plainenglish.io/*
+// @match        https://*.plainenglish.io/*
+// @match        https://blog.devgenius.io/*
+// @match        https://*.blog.devgenius.io/*
+// @match        https://aws.plainenglish.io/*
+// @match        https://*.aws.plainenglish.io/*
+// @match        https://python.plainenglish.io/*
+// @match        https://*.python.plainenglish.io/*
+// @match        https://medium.com/@*
+// @match        https://link.medium.com/*
+// @match        https://stories.medium.com/*
 // @icon         https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png
 // @grant        none
 // @noframes
+// @run-at       document-start
 // @homepageURL  https://github.com/ShrekBytes/medium-unlocked
 // @supportURL   https://github.com/ShrekBytes/medium-unlocked/issues
 // @downloadURL  https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js
 // @updateURL    https://github.com/ShrekBytes/medium-unlocked/raw/main/medium-unlocked.user.js
 // ==/UserScript==
 
-(function () {
+(function() {
     'use strict';
 
-    let buttonsAdded = false;
-    let currentUrl = window.location.href;
-    let retryCount = 0;
-    const maxRetries = 5;
+    // State management
+    const state = {
+        buttonsAdded: false,
+        currentUrl: window.location.href,
+        isChecking: false,
+        lastCheck: 0,
+        observer: null,
+        checkTimeout: null
+    };
 
-    // Utility: Debounce function with longer delay for better reliability
-    function debounce(fn, delay) {
-        let timer;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
-        };
-    }
+    // Performance optimized selectors - ordered by likelihood and specificity
+    const PAYWALL_SELECTORS = Object.freeze([
+        // Primary paywall indicators (most common)
+        '[data-testid="paywall"]',
+        '[data-testid="meter-stats"]',
+        '[data-testid="subscribe-paywall"]',
+        '.paywall',
 
-    // Enhanced paywall detection with more selectors and patterns
-    function isMemberOnlyArticle() {
-        // Quick selectors for common paywall elements
-        const paywallSelectors = [
-            '[data-testid="paywall"]',
-            '[data-testid="meter-stats"]',
-            '[data-testid="subscribe-paywall"]',
-            '[data-testid="paywall-upsell"]',
-            '.paywall',
-            '.js-paywall',
-            '.meteredContent',
-            '.u-showForMembers',
-            '[data-post-id][data-source="paywall"]',
-            '.memberPreview',
-            '.js-memberPreview'
-        ];
+        // Secondary indicators
+        '[data-testid="paywall-upsell"]',
+        '[data-testid="meter-card"]',
+        '.js-paywall',
+        '.meteredContent',
+        '.u-showForMembers',
+        '.memberPreview',
+        '.js-memberPreview',
 
-        // Check for paywall elements
-        for (let selector of paywallSelectors) {
+        // Content limitation indicators
+        '.js-truncatedPostBody',
+        '[data-source="paywall"]',
+        '[data-post-id][data-source="meter"]',
+        '.u-lineHeightTighter.u-fontSize18:last-child',
+
+        // Subscribe/upgrade prompts
+        '[data-testid="subscribe-button"]',
+        '[data-testid="upgrade-button"]',
+        '.js-upgradeButton',
+        '.js-subscribeButton'
+    ]);
+
+    // Optimized text patterns - case insensitive, ordered by frequency
+    const PAYWALL_PATTERNS = Object.freeze([
+        'member-only story',
+        'subscribe to read',
+        'become a member',
+        'sign up to read',
+        'continue reading with',
+        'read the full story',
+        'unlock unlimited',
+        'upgrade to continue',
+        'this story is published in',
+        'get unlimited access'
+    ]);
+
+    // Efficient paywall detection with early returns
+    function isPaywalled() {
+        // Quick DOM-based detection first (fastest)
+        for (const selector of PAYWALL_SELECTORS) {
             if (document.querySelector(selector)) {
                 return true;
             }
         }
 
-        // Text-based detection (more comprehensive)
-        const bodyText = document.body.textContent.toLowerCase();
-        const paywallPatterns = [
-            'member-only story',
-            'subscribe to read',
-            'become a member',
-            'read the full story',
-            'this story is published in',
-            'sign up to read',
-            'continue reading with a membership',
-            'unlock unlimited articles',
-            'this post is for paying subscribers only',
-            'get unlimited access',
-            'upgrade to continue reading'
-        ];
+        // Text-based detection (slower, but thorough)
+        const bodyText = document.body?.textContent?.toLowerCase();
+        if (!bodyText) return false;
 
-        const foundPattern = paywallPatterns.some(pattern => bodyText.includes(pattern));
-        if (foundPattern) {
-            return true;
-        }
-
-        // Check for clipping/truncated content indicators
-        const clippingIndicators = [
-            '.js-truncatedPostBody',
-            '.u-lineHeightTighter.u-fontSize18',
-            '[data-selectable-paragraph]:last-child[data-truncated="true"]'
-        ];
-
-        for (let selector of clippingIndicators) {
-            if (document.querySelector(selector)) {
-                return true;
-            }
-        }
-
-        return false;
+        return PAYWALL_PATTERNS.some(pattern => bodyText.includes(pattern));
     }
 
-    // Create minimal styled button (original design)
-    function createButton(text, url, topPosition) {
+    // Optimized button creation with minimal DOM operations
+    function createButton(text, url, top) {
         const button = document.createElement('a');
-        button.innerHTML = text;
-        button.href = url;
-        button.target = '_blank';
-        button.rel = 'noopener noreferrer';
-        button.className = 'medium-reader-btn';
+
+        // Set properties in batch for better performance
+        Object.assign(button, {
+            innerHTML: text,
+            href: url,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            className: 'medium-unlock-btn'
+        });
+
+        // Optimized styles as single string
         button.style.cssText = `
-            position: fixed;
-            top: ${topPosition}px;
-            right: 64px;
-            z-index: 9999;
-            background: rgba(255, 255, 255, 0.44);
-            backdrop-filter: blur(2px);
-            color: black;
-            border: 1px solid black;
-            border-radius: 2px;
-            font-size: 14px;
-            font-weight: 400;
-            cursor: pointer;
-            width: 100px;
-            height: 36px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            position:fixed;top:${top}px;right:64px;z-index:9999;
+            background:rgba(255,255,255,.44);backdrop-filter:blur(2px);
+            color:#000;border:1px solid #000;border-radius:2px;
+            font:400 14px/-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+            cursor:pointer;width:100px;height:36px;
+            display:flex;align-items:center;justify-content:center;
+            text-decoration:none;box-sizing:border-box;
         `;
+
         return button;
     }
 
-    // Add buttons quickly
+    // Efficient button management
     function addButtons() {
-        if (buttonsAdded) return;
+        if (state.buttonsAdded || !document.body) return;
 
-        // Remove any existing buttons
-        removeButtons();
+        const url = encodeURIComponent(window.location.href);
+        const fragment = document.createDocumentFragment();
 
-        const currentUrl = window.location.href;
-        const encodedUrl = encodeURIComponent(currentUrl);
+        // Create buttons in memory first
+        fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 400));
+        fragment.appendChild(createButton('Freedium', `https://freedium.cfd/${url}`, 440));
+
+        // Single DOM append operation
+        document.body.appendChild(fragment);
+        state.buttonsAdded = true;
+    }
+
+    function removeButtons() {
+        if (!state.buttonsAdded) return;
+
+        // Use more specific selector to avoid conflicts
+        const buttons = document.querySelectorAll('.medium-unlock-btn');
+        if (buttons.length > 0) {
+            buttons.forEach(btn => btn.remove());
+            state.buttonsAdded = false;
+        }
+    }
+
+    // Throttled paywall check to prevent excessive calls
+    function checkPaywall() {
+        const now = Date.now();
+
+        // Prevent rapid successive checks
+        if (state.isChecking || (now - state.lastCheck) < 100) {
+            return;
+        }
+
+        state.isChecking = true;
+        state.lastCheck = now;
 
         try {
-            const readMediumBtn = createButton('ReadMedium', `https://readmedium.com/en/${encodedUrl}`, 400);
-            const freediumBtn = createButton('Freedium', `https://freedium.cfd/${encodedUrl}`, 440);
+            const isPaywalledNow = isPaywalled();
 
-            document.body.appendChild(readMediumBtn);
-            document.body.appendChild(freediumBtn);
-
-            buttonsAdded = true;
-
-        } catch (error) {
-            console.error('Medium Unlocked: Error adding buttons:', error);
-        }
-    }
-
-    // Remove existing buttons
-    function removeButtons() {
-        document.querySelectorAll('.medium-reader-btn').forEach(btn => btn.remove());
-        buttonsAdded = false;
-    }
-
-    // Faster paywall check with minimal delay
-    const checkForPaywall = debounce(() => {
-        if (isMemberOnlyArticle() && !buttonsAdded) {
-            addButtons();
-        } else if (!isMemberOnlyArticle() && buttonsAdded) {
-            removeButtons();
-        }
-    }, 200); // Much faster debounce
-
-    // Initialize with immediate check
-    function init() {
-        buttonsAdded = false;
-
-        // Immediate check
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkForPaywall);
-        } else {
-            checkForPaywall();
-        }
-
-        // One additional check for slow content
-        setTimeout(checkForPaywall, 1000);
-    }
-
-    // Enhanced URL change detection
-    function handleUrlChange() {
-        const newUrl = window.location.href;
-        if (newUrl !== currentUrl) {
-            currentUrl = newUrl;
-            removeButtons();
-            setTimeout(checkForPaywall, 300); // Quick response to URL changes
-        }
-    }
-
-    // Comprehensive mutation observer
-    const observer = new MutationObserver((mutations) => {
-        let shouldCheck = false;
-
-        mutations.forEach(mutation => {
-            // Check for URL changes
-            if (window.location.href !== currentUrl) {
-                handleUrlChange();
-                shouldCheck = true;
-                return;
+            if (isPaywalledNow && !state.buttonsAdded) {
+                addButtons();
+            } else if (!isPaywalledNow && state.buttonsAdded) {
+                removeButtons();
             }
+        } catch (error) {
+            // Silent error handling - don't break the page
+        } finally {
+            state.isChecking = false;
+        }
+    }
 
-            // Check for content changes that might indicate paywall loading
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                for (let node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        const element = node;
-                        if (element.matches && (
-                            element.matches('[data-testid*="paywall"]') ||
-                            element.matches('[data-testid*="meter"]') ||
-                            element.matches('.paywall') ||
-                            element.textContent.toLowerCase().includes('member-only')
-                        )) {
-                            shouldCheck = true;
-                            break;
+    // Debounced check for performance
+    function scheduleCheck(delay = 150) {
+        if (state.checkTimeout) {
+            clearTimeout(state.checkTimeout);
+        }
+
+        state.checkTimeout = setTimeout(() => {
+            checkPaywall();
+            state.checkTimeout = null;
+        }, delay);
+    }
+
+    // Optimized mutation observer with smart filtering
+    function createObserver() {
+        return new MutationObserver((mutations) => {
+            let shouldCheck = false;
+
+            // Efficient mutation analysis
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    // Check only Element nodes for relevant changes
+                    for (const node of mutation.addedNodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            const element = node;
+
+                            // Check if added node or its children contain paywall indicators
+                            if (element.matches?.(PAYWALL_SELECTORS.join(',')) ||
+                                element.querySelector?.(PAYWALL_SELECTORS.join(','))) {
+                                shouldCheck = true;
+                                break;
+                            }
                         }
                     }
+
+                    if (shouldCheck) break;
                 }
             }
+
+            if (shouldCheck) {
+                scheduleCheck();
+            }
         });
+    }
 
-        if (shouldCheck) {
-            checkForPaywall();
+    // Handle URL changes efficiently
+    function handleUrlChange() {
+        const newUrl = window.location.href;
+
+        if (newUrl !== state.currentUrl) {
+            state.currentUrl = newUrl;
+            removeButtons();
+            scheduleCheck(300); // Slight delay for page transition
         }
-    });
+    }
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['data-testid', 'class']
-    });
+    // Optimized history API interception
+    function interceptHistory() {
+        const originalPushState = history.pushState;
+        const originalReplaceState = history.replaceState;
 
-    // Handle navigation events
-    window.addEventListener('popstate', handleUrlChange);
-    window.addEventListener('pushstate', handleUrlChange);
-    window.addEventListener('replacestate', handleUrlChange);
+        history.pushState = function(...args) {
+            const result = originalPushState.apply(this, args);
+            setTimeout(handleUrlChange, 0);
+            return result;
+        };
 
-    // Intercept history methods for SPA navigation
-    const originalPushState = history.pushState;
-    const originalReplaceState = history.replaceState;
+        history.replaceState = function(...args) {
+            const result = originalReplaceState.apply(this, args);
+            setTimeout(handleUrlChange, 0);
+            return result;
+        };
+    }
 
-    history.pushState = function(...args) {
-        originalPushState.apply(history, args);
-        setTimeout(handleUrlChange, 50);
-    };
-
-    history.replaceState = function(...args) {
-        originalReplaceState.apply(history, args);
-        setTimeout(handleUrlChange, 50);
-    };
-
-    // Handle page visibility changes for quick response
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-            setTimeout(checkForPaywall, 100);
+    // Initialize with optimal timing
+    function initialize() {
+        // Immediate check if DOM is ready
+        if (document.readyState !== 'loading') {
+            scheduleCheck(0);
         }
-    });
 
-    // Start the script
-    init();
+        // Setup observers and listeners
+        if (!state.observer) {
+            state.observer = createObserver();
 
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-        observer.disconnect();
+            // Wait for body to be available
+            const startObserving = () => {
+                if (document.body) {
+                    state.observer.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['data-testid', 'class', 'data-source']
+                    });
+                } else {
+                    setTimeout(startObserving, 50);
+                }
+            };
+
+            startObserving();
+        }
+
+        // Event listeners with passive option for performance
+        window.addEventListener('popstate', handleUrlChange, { passive: true });
+
+        // Handle visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                scheduleCheck(50);
+            }
+        }, { passive: true });
+
+        // DOM ready fallback
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => scheduleCheck(0), { once: true });
+        }
+    }
+
+    // Cleanup function
+    function cleanup() {
+        if (state.observer) {
+            state.observer.disconnect();
+            state.observer = null;
+        }
+
+        if (state.checkTimeout) {
+            clearTimeout(state.checkTimeout);
+            state.checkTimeout = null;
+        }
+
         removeButtons();
-    });
+        state.isChecking = false;
+    }
+
+    // Handle page unload
+    window.addEventListener('beforeunload', cleanup, { passive: true });
+
+    // Start everything
+    interceptHistory();
+    initialize();
 
 })();
