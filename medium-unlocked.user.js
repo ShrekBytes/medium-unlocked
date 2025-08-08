@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @version      1.4
+// @version      1.5
 // @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles.
 // @author       ShrekBytes
 // @license      MIT
@@ -19,6 +19,8 @@
 // @match        https://*.writingcooperative.com/*
 // @match        https://entrepreneurshandbook.co/*
 // @match        https://*.entrepreneurshandbook.co/*
+// @match        https://medium.muz.li/*
+// @match        https://*.medium.muz.li/*
 // @match        https://blog.prototypr.io/*
 // @match        https://*.blog.prototypr.io/*
 // @match        https://bettermarketing.pub/*
@@ -31,6 +33,8 @@
 // @match        https://*.javascript.plainenglish.io/*
 // @match        https://thebelladonnacomedy.com/*
 // @match        https://*.thebelladonnacomedy.com/*
+// @match        https://medium.datadriveninvestor.com/*
+// @match        https://*.medium.datadriveninvestor.com/*
 // @match        https://itnext.io/*
 // @match        https://*.itnext.io/*
 // @match        https://proandroiddev.com/*
