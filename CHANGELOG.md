@@ -16,8 +16,3 @@
 
 - Button order: RemovePaywalls → Freedium → Archive.today → ReadMedium
 
----
-
-## [3.0.1] - Previous
-
-Initial release with ReadMedium and Freedium support.
