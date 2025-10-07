@@ -2,7 +2,7 @@
 
 > A userscript that adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) for paywalled Medium articles.
 
-![Screenshot of Medium Unlocked](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/screenshots/pc.jpg)
+![Screenshot of Medium Unlocked](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/screenshots/pc.png)
 
 ## Features
 

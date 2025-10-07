@@ -2,7 +2,7 @@
 
 > A userscript that adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) for paywalled Medium articles.
 
-![Screenshot of Medium Unlocked](screenshots/pc.jpg)
+![Screenshot of Medium Unlocked](screenshots/pc.png)
 
 [![Install Medium Unlocked](https://img.shields.io/badge/Install%20Userscript-Medium%20Unlocked-blue?style=for-the-badge&logo=userscript)](https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/main/medium-unlocked.user.js)
 [![View on GreasyFork](https://img.shields.io/badge/View%20on-GreasyFork-4E9A06?style=for-the-badge&logo=greasyfork)](https://greasyfork.org/en/scripts/544839-medium-unlocked)
@@ -83,8 +83,8 @@
 - Supports Medium's dynamic page loads (SPA)
 
 <p align="center">
-  <img src="screenshots/mobile.jpg" width="33%"/>
-  <img src="screenshots/pc.jpg" width="88%"/>
+  <img src="screenshots/mobile.png" width="33%"/>
+  <img src="screenshots/pc.png" width="88%"/>
 </p>
 
 ## Notes
