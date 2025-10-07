@@ -82,10 +82,12 @@
 - Simple, fast, and privacy-respecting
 - Supports Medium's dynamic page loads (SPA)
 
-<p align="center">
-  <img src="screenshots/mobile.png" width="88%"/>
-  <img src="screenshots/pc.png" width="88%"/>
-</p>
+## Screenshots
+### Mobile
+![Mobile](screenshots/mobile.png)
+### Desktop
+![Mobile](screenshots/pc.png)
+
 
 ## Notes
 
