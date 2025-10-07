@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @description  Adds alternate reading links (ReadMedium and Freedium) to Medium paywalled articles with improved reliability.
-// @version      3.0.1
+// @description  Adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) to Medium paywalled articles with improved reliability.
+// @version      3.1.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -67,6 +67,8 @@
 // @match        https://*.aws.plainenglish.io/*
 // @match        https://python.plainenglish.io/*
 // @match        https://*.python.plainenglish.io/*
+// @match        https://entrepreneurship.com/*
+// @match        https://*.entrepreneurship.com/*
 // @match        https://medium.com/@*
 // @match        https://link.medium.com/*
 // @match        https://stories.medium.com/*
@@ -90,7 +92,8 @@
         isChecking: false,
         lastCheck: 0,
         observer: null,
-        checkTimeout: null
+        checkTimeout: null,
+        abortController: new AbortController()
     };
 
     // Performance optimized selectors - ordered by likelihood and specificity
@@ -166,15 +169,20 @@
             className: 'medium-unlock-btn'
         });
 
-        // Optimized styles as single string
+        // Add ARIA label for accessibility
+        button.setAttribute('aria-label', `Read this article on ${text}`);
+        button.setAttribute('role', 'link');
+
+        // Optimized styles as single string with fixed font syntax
         button.style.cssText = `
-            position:fixed;top:${top}px;right:64px;z-index:9999;
-            background:rgba(64, 64, 128,.33);backdrop-filter:blur(2px);
-            color:#000;border:1px solid #000;border-radius:2px;
-            font:400 14px/-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-            cursor:pointer;width:128px;height:36px;
-            display:flex;align-items:center;justify-content:center;
-            text-decoration:none;box-sizing:border-box;
+            position:fixed !important;top:${top}px !important;right:64px !important;z-index:9999 !important;
+            background:rgba(64, 64, 128,.33) !important;backdrop-filter:blur(2px) !important;
+            color:#000 !important;border:1px solid #000 !important;border-radius:2px !important;
+            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif !important;
+            font-size:14px !important;font-weight:400 !important;line-height:1.4 !important;
+            cursor:pointer !important;width:128px !important;height:36px !important;
+            display:flex !important;align-items:center !important;justify-content:center !important;
+            text-decoration:none !important;box-sizing:border-box !important;
         `;
 
         return button;
@@ -184,12 +192,22 @@
     function addButtons() {
         if (state.buttonsAdded || !document.body) return;
 
+        // Double-check to prevent race conditions
+        const existingButtons = document.querySelectorAll('.medium-unlock-btn');
+        if (existingButtons.length > 0) {
+            state.buttonsAdded = true;
+            return;
+        }
+
         const url = encodeURIComponent(window.location.href);
+        const rawUrl = window.location.href;
         const fragment = document.createDocumentFragment();
 
-        // Create buttons in memory first
-        fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 400));
+        // Create buttons in memory first (ordered by preference)
+        fragment.appendChild(createButton('RemovePaywalls', `https://removepaywalls.com/${rawUrl}`, 400));
         fragment.appendChild(createButton('Freedium', `https://freedium.cfd/${url}`, 440));
+        fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 480));
+        fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 520));
 
         // Single DOM append operation
         document.body.appendChild(fragment);
@@ -335,19 +353,28 @@
             startObserving();
         }
 
-        // Event listeners with passive option for performance
-        window.addEventListener('popstate', handleUrlChange, { passive: true });
+        // Event listeners with passive option for performance and AbortController
+        window.addEventListener('popstate', handleUrlChange, { 
+            passive: true, 
+            signal: state.abortController.signal 
+        });
 
         // Handle visibility changes
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 scheduleCheck(50);
             }
-        }, { passive: true });
+        }, { 
+            passive: true, 
+            signal: state.abortController.signal 
+        });
 
         // DOM ready fallback
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => scheduleCheck(0), { once: true });
+            document.addEventListener('DOMContentLoaded', () => scheduleCheck(0), { 
+                once: true,
+                signal: state.abortController.signal 
+            });
         }
     }
 
@@ -363,12 +390,19 @@
             state.checkTimeout = null;
         }
 
+        if (state.abortController) {
+            state.abortController.abort();
+        }
+
         removeButtons();
         state.isChecking = false;
     }
 
     // Handle page unload
-    window.addEventListener('beforeunload', cleanup, { passive: true });
+    window.addEventListener('beforeunload', cleanup, { 
+        passive: true,
+        signal: state.abortController.signal 
+    });
 
     // Start everything
     interceptHistory();
