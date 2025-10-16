@@ -2,7 +2,7 @@
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
 // @description  Adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) to Medium paywalled articles with improved reliability.
-// @version      3.2.0
+// @version      3.3.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -175,14 +175,14 @@
 
         // Optimized styles as single string with fixed font syntax
         button.style.cssText = `
-            position:fixed !important;top:${top}px !important;right:64px !important;z-index:9999 !important;
-            background:rgba(64, 64, 128,.33) !important;backdrop-filter:blur(2px) !important;
-            color:#000 !important;border:1px solid #000 !important;border-radius:2px !important;
-            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif !important;
-            font-size:14px !important;font-weight:400 !important;line-height:1.4 !important;
-            cursor:pointer !important;width:128px !important;height:36px !important;
-            display:flex !important;align-items:center !important;justify-content:center !important;
-            text-decoration:none !important;box-sizing:border-box !important;
+        position:fixed !important;top:${top}px !important;right:64px !important;z-index:9999 !important;
+        background:rgba(64, 64, 128,.33) !important;backdrop-filter:blur(2px) !important;
+        color:#000 !important;border:1px solid #000 !important;border-radius:2px !important;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif !important;
+        font-size:14px !important;font-weight:400 !important;line-height:1.4 !important;
+        cursor:pointer !important;width:128px !important;height:36px !important;
+        display:flex !important;align-items:center !important;justify-content:center !important;
+        text-decoration:none !important;box-sizing:border-box !important;
         `;
 
         return button;
@@ -281,8 +281,8 @@
                             if (element.matches?.(PAYWALL_SELECTORS.join(',')) ||
                                 element.querySelector?.(PAYWALL_SELECTORS.join(','))) {
                                 shouldCheck = true;
-                                break;
-                            }
+                            break;
+                                }
                         }
                     }
 
@@ -354,9 +354,9 @@
         }
 
         // Event listeners with passive option for performance and AbortController
-        window.addEventListener('popstate', handleUrlChange, { 
-            passive: true, 
-            signal: state.abortController.signal 
+        window.addEventListener('popstate', handleUrlChange, {
+            passive: true,
+            signal: state.abortController.signal
         });
 
         // Handle visibility changes
@@ -364,16 +364,16 @@
             if (!document.hidden) {
                 scheduleCheck(50);
             }
-        }, { 
-            passive: true, 
-            signal: state.abortController.signal 
+        }, {
+            passive: true,
+            signal: state.abortController.signal
         });
 
         // DOM ready fallback
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => scheduleCheck(0), { 
+            document.addEventListener('DOMContentLoaded', () => scheduleCheck(0), {
                 once: true,
-                signal: state.abortController.signal 
+                signal: state.abortController.signal
             });
         }
     }
@@ -399,9 +399,9 @@
     }
 
     // Handle page unload
-    window.addEventListener('beforeunload', cleanup, { 
+    window.addEventListener('beforeunload', cleanup, {
         passive: true,
-        signal: state.abortController.signal 
+        signal: state.abortController.signal
     });
 
     // Start everything
