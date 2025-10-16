@@ -205,7 +205,7 @@
 
         // Create buttons in memory first (ordered by preference)
         fragment.appendChild(createButton('RemovePaywalls', `https://removepaywalls.com/${rawUrl}`, 400));
-        fragment.appendChild(createButton('Freedium', `https://freedium.cfd/${url}`, 440));
+        fragment.appendChild(createButton('Freedium', `https://freedium-mirror.cfd/${url}`, 440));
         fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 480));
         fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 520));
 
