@@ -69,6 +69,8 @@
 // @match        https://*.python.plainenglish.io/*
 // @match        https://entrepreneurship.com/*
 // @match        https://*.entrepreneurship.com/*
+// @match        https://pub.towardsai.net/*
+// @match        https://*.pub.towardsai.net/*
 // @match        https://medium.com/@*
 // @match        https://link.medium.com/*
 // @match        https://stories.medium.com/*
