@@ -67,6 +67,7 @@
 - UX Collective (`uxdesign.cc`)
 - UX Planet (`uxplanet.org`)
 - The Writing Cooperative (`writingcooperative.com`)
+- Towards AI (`pub.towardsai.net`)
 
 ## Usage
 
