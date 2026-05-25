@@ -74,6 +74,7 @@
 // @match        https://medium.com/@*
 // @match        https://link.medium.com/*
 // @match        https://stories.medium.com/*
+// @match        https://generativeai.pub/*
 // @icon         https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png
 // @grant        none
 // @noframes
