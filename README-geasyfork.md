@@ -36,7 +36,6 @@
 - Better Programming (`betterprogramming.pub`)
 - Bits and Pieces Blog (`blog.bitsrc.io`)
 - Dev Genius Blog (`blog.devgenius.io`)
-- Dev Genius Blog subdomains (`*.blog.devgenius.io`)
 - Prototypr Blog (`blog.prototypr.io`)
 - The Startup (UseJournal) (`blog.usejournal.com`)
 - BYRSLF (`byrslf.co`)
@@ -61,7 +60,6 @@
 - The Writing Cooperative (`writingcooperative.com`)
 - Towards AI (`pub.towardsai.net`)
 - Generative AI Pub (`generativeai.pub`)
-- Generative AI Pub subdomains (`*.generativeai.pub`)
 
 ## Notes
 
