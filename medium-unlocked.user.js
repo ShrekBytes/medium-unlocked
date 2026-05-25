@@ -2,7 +2,7 @@
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
 // @description  Adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) to Medium paywalled articles with improved reliability.
-// @version      3.4.0
+// @version      3.5.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -75,6 +75,7 @@
 // @match        https://link.medium.com/*
 // @match        https://stories.medium.com/*
 // @match        https://generativeai.pub/*
+// @match        https://*.generativeai.pub/*
 // @icon         https://raw.githubusercontent.com/ShrekBytes/medium-unlocked/refs/heads/main/freedom.png
 // @grant        none
 // @noframes
