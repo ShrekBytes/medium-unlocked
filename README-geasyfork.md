@@ -13,7 +13,7 @@
 
 ## Supported Domains
 
-> This script supports all Medium domains, subdomains, and some custom domains. While it's technically possible to match every site with `*://*/*`, doing so would run the script on all websites, which is inefficient and unnecessary. If you want a Medium-powered custom domain added, [open an issue](https://github.com/ShrekBytes/medium-unlocked/issues) and I'll add it.
+> This script supports all Medium domains, subdomains, and some custom domains. While it's technically possible to match every site with `*://*/*`, doing so would run the script on all websites, which is not advisable for performance and security reasons. The list below covers all the default enabled domains and popular Medium-powered publications.
 
 - **RemovePaywalls** - Supports all domains listed below
 - **Freedium** - Supports all domains listed below
@@ -36,6 +36,7 @@
 - Better Programming (`betterprogramming.pub`)
 - Bits and Pieces Blog (`blog.bitsrc.io`)
 - Dev Genius Blog (`blog.devgenius.io`)
+- Dev Genius Blog subdomains (`*.blog.devgenius.io`)
 - Prototypr Blog (`blog.prototypr.io`)
 - The Startup (UseJournal) (`blog.usejournal.com`)
 - BYRSLF (`byrslf.co`)
@@ -58,6 +59,9 @@
 - UX Collective (`uxdesign.cc`)
 - UX Planet (`uxplanet.org`)
 - The Writing Cooperative (`writingcooperative.com`)
+- Towards AI (`pub.towardsai.net`)
+- Generative AI Pub (`generativeai.pub`)
+- Generative AI Pub subdomains (`*.generativeai.pub`)
 
 ## Notes
 
