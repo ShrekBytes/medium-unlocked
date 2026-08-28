@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @description  Adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) to Medium paywalled articles with improved reliability.
-// @version      3.5.0
+// @description  Adds alternate reading links (Freedium, Smry, ReadMedium & Archive.today) to Medium paywalled articles with improved reliability.
+// @version      3.6.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -207,11 +207,11 @@
         const rawUrl = window.location.href;
         const fragment = document.createDocumentFragment();
 
-        // Create buttons in memory first (ordered by preference)
-        fragment.appendChild(createButton('RemovePaywalls', `https://removepaywalls.com/${rawUrl}`, 400));
-        fragment.appendChild(createButton('Freedium', `https://freedium-mirror.cfd/${url}`, 440));
-        fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 480));
-        fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 520));
+        // Create buttons in memory first (ordered by current reliability, most to least)
+        fragment.appendChild(createButton('Freedium', `https://freedium-mirror.cfd/${url}`, 400));
+        fragment.appendChild(createButton('Smry', `https://smry.ai/${rawUrl}`, 440));
+        fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 480));
+        fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 520));
 
         // Single DOM append operation
         document.body.appendChild(fragment);
