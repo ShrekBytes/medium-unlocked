@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @description  Adds alternate reading links (Freedium, Smry, ReadMedium & Archive.today) to Medium paywalled articles with improved reliability.
-// @version      3.6.0
+// @description  Adds alternate reading links (Freedium, Smry, ReadMedium, Archive.today & Wayback Machine) to Medium paywalled articles with improved reliability.
+// @version      3.7.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -212,6 +212,7 @@
         fragment.appendChild(createButton('Smry', `https://smry.ai/${rawUrl}`, 440));
         fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 480));
         fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 520));
+        fragment.appendChild(createButton('Wayback', `https://web.archive.org/web/${rawUrl}`, 560));
 
         // Single DOM append operation
         document.body.appendChild(fragment);
