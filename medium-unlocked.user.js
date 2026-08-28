@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Medium Unlocked
 // @namespace    https://github.com/ShrekBytes
-// @description  Adds alternate reading links (Freedium, Smry, ReadMedium, Archive.today & Wayback Machine) to Medium paywalled articles with improved reliability.
-// @version      3.7.0
+// @description  Adds alternate reading links (Freedium & Medium Free) to Medium paywalled articles.
+// @version      3.8.0
 // @author       ShrekBytes
 // @license      MIT
 // @match        https://medium.com/*
@@ -209,10 +209,11 @@
 
         // Create buttons in memory first (ordered by current reliability, most to least)
         fragment.appendChild(createButton('Freedium', `https://freedium-mirror.cfd/${url}`, 400));
-        fragment.appendChild(createButton('Smry', `https://smry.ai/${rawUrl}`, 440));
-        fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 480));
-        fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 520));
-        fragment.appendChild(createButton('Wayback', `https://web.archive.org/web/${rawUrl}`, 560));
+        fragment.appendChild(createButton('Medium Free', `https://ekky.dev/app/medium`, 440));
+        // fragment.appendChild(createButton('Smry', `https://smry.ai/${rawUrl}`, 440));
+        // fragment.appendChild(createButton('ReadMedium', `https://readmedium.com/en/${url}`, 480));
+        // fragment.appendChild(createButton('Archive.today', `https://archive.today/latest/${rawUrl}`, 520));
+        // fragment.appendChild(createButton('Wayback', `https://web.archive.org/web/${rawUrl}`, 560));
 
         // Single DOM append operation
         document.body.appendChild(fragment);
