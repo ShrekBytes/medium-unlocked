@@ -1,6 +1,6 @@
 # Medium Unlocked
 
-> A userscript that adds alternate reading links (RemovePaywalls, Freedium, Archive.today & ReadMedium) for paywalled Medium articles.
+> A userscript that adds alternate reading links (Freedium & Medium Free) for paywalled Medium articles.
 
 ![Screenshot of Medium Unlocked](screenshots/pc.png)
 
@@ -18,16 +18,14 @@
 
 ## Overview
 
-**Medium Unlocked** is a lightweight userscript that detects paywalled ("member-only") articles on Medium and provides alternate reading links using external services — [RemovePaywalls](https://removepaywalls.com), [Freedium](https://freedium-mirror.cfd), [Archive.today](https://archive.today), and [ReadMedium](https://readmedium.com) — so you can read the content without the paywall.
+**Medium Unlocked** is a lightweight userscript that detects paywalled ("member-only") articles on Medium and provides alternate reading links using [Freedium](https://freedium-mirror.cfd) and [Medium Free](https://ekky.dev/app/medium/) so you can read the content without the paywall.
 
 ## Supported Domains
 
 > This script supports all Medium domains, subdomains, and some custom domains. While it's technically possible to match every site with `*://*/*`, doing so would run the script on all websites, which is not advisable for performance and security reasons. The list below covers all the default enabled domains and popular Medium-powered publications.
 
-- **RemovePaywalls** - Supports all domains listed below
 - **Freedium** - Supports all domains listed below
-- **Archive.today** - Supports all domains listed below
-- **ReadMedium** - Supports only Medium.com and \*.medium.com subdomains
+- **Medium Free** - Supports all domains listed below
 
 ### All Supported Domains List
 
@@ -69,6 +67,7 @@
 - The Writing Cooperative (`writingcooperative.com`)
 - Towards AI (`pub.towardsai.net`)
 - Generative AI Pub (`generativeai.pub`)
+- FAUN (`faun.pub`)
 
 ## Usage
 
@@ -79,7 +78,7 @@
 ## Features
 
 - Detects Medium paywalls automatically
-- Adds RemovePaywalls, Freedium, Archive.today & ReadMedium buttons
+- Adds Freedium & Medium Free buttons
 - Works on both mobile and desktop
 - Simple, fast, and privacy-respecting
 - Supports Medium's dynamic page loads (SPA)
