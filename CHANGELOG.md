@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.10.0] - 2026-10-09
+
+### ✨ New
+
+- Added support for **faun.pub** and **\*.faun.pub**
+
 ## [3.1.0] - 2025-10-07
 
 ### ✨ New
@@ -15,4 +21,3 @@
 ### 🔄 Changed
 
 - Button order: RemovePaywalls → Freedium → Archive.today → ReadMedium
-
