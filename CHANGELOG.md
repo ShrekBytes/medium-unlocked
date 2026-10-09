@@ -6,10 +6,6 @@
 
 - Added support for **faun.pub** and **\*.faun.pub**
 
-### 🔄 Changed
-
-- Updated release metadata and documentation to version **3.10.0**
-
 ## [3.1.0] - 2025-10-07
 
 ### ✨ New
